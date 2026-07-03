@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>MeetWise AI - Profile Settings</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        background: "#050505",
+                        surface: "#0a0a0c",
+                        "surface-card": "rgba(13, 13, 17, 0.45)",
+                        primary: "#8B5CF6", // purple
+                        secondary: "#3B82F6", // blue
+                        accent: "#06B6D4", // cyan
+                        pinky: "#EC4899", // pink
+                        "on-background": "#F3F4F6",
+                        "on-surface": "#E5E7EB",
+                        outline: "rgba(255, 255, 255, 0.05)",
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        lg: "0.75rem",
+                        xl: "1rem",
+                        "2xl": "1.5rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        display: ["Space Grotesk", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #F3F4F6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .cosmic-grid {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .glass-card {
+            background: rgba(13, 13, 17, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+        }
+        .glass-sidebar {
+            background: rgba(10, 10, 12, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-header {
+            background: rgba(5, 5, 5, 0.5);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative flex antialiased">
+    <!-- Cosmic graphics overlays -->
+    <div class="absolute inset-0 cosmic-grid pointer-events-none z-0"></div>
+    <div class="gradient-orb w-[500px] h-[500px] bg-primary top-[5%] left-[25%] opacity-10"></div>
+    <div class="gradient-orb w-[600px] h-[600px] bg-secondary bottom-[5%] right-[10%] opacity-10"></div>
+
+    <!-- Mobile Header -->
+    <div class="md:hidden fixed top-0 left-0 w-full bg-background border-b border-white/5 z-50 px-6 py-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded bg-gradient-to-tr from-primary to-pinky flex items-center justify-center">
+                <i data-lucide="sparkles" class="text-white w-5 h-5"></i>
+            </div>
+            <span class="font-display text-sm font-bold tracking-tight text-white">MeetWise AI</span>
+        </div>
+        <button class="text-gray-400 p-2 hover:bg-white/5 rounded-full" id="mobile-menu-btn">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+    </div>
+
+    <!-- Side Navigation Bar -->
+    <aside class="glass-sidebar fixed left-0 top-0 h-screen w-[250px] z-40 flex flex-col p-5 gap-6 transition-transform duration-300 transform -translate-x-full md:translate-x-0" id="sidebar">
+        <!-- Mobile close button -->
+        <button class="md:hidden absolute top-4 right-4 text-gray-500 hover:text-white p-2" id="mobile-close-btn">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <!-- Brand / Header -->
+        <div class="flex items-center gap-3 px-2">
+            <div class="w-8 h-8 rounded overflow-hidden border border-white/10 shrink-0">
+                <img class="w-full h-full object-cover" alt="Workspace Brand Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0mUoF23zx060zpmrbQ50vc83G3huPy6J3JNw6nAWWpoLfjqVDOxzZUfalAKmWW2uNv9aamhQZwEQtSJ9rxDtskJ3vWrQgYRnuKylwEnv3xjnJNxvn_lgNdPCi_bH1U94YTt6TT302Tlcqua9xu8wA8HA_RSXy-VYadZql2-vG4Lq4JB7Eam3jHjE6ZAyC3JnflUNZEXOrlDPN2NA-B6KpUbU-r4WJe0zvweyhgdChWeX_Jx9faKA-3Ey5ntVa6GafglR1YLZ-yrU"/>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-display text-sm font-bold text-white leading-none">MeetWise AI</span>
+                <span class="text-[9px] uppercase tracking-widest text-primary font-bold mt-1">Enterprise Plan</span>
+            </div>
+        </div>
+
+        <!-- Create Button -->
+        <button class="w-full bg-white text-black py-2.5 rounded-xl font-semibold text-xs hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:scale-[1.02]">
+            <i data-lucide="plus" class="w-4 h-4"></i> Create Meeting
+        </button>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex-1 flex flex-col gap-1.5 overflow-y-auto">
+            <a class="flex items-center gap-3 px-3.5 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all" href="../meetwise_ai_dashboard/code.html">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                <span class="text-xs tracking-wide">Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-3.5 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all" href="../meetwise_ai_meeting_details/code.html">
+                <i data-lucide="video" class="w-4 h-4"></i>
+                <span class="text-xs tracking-wide">Meetings</span>
+            </a>
+            <a class="flex items-center gap-3 px-3.5 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all" href="../meetwise_ai_dashboard/code.html">
+                <i data-lucide="check-square" class="w-4 h-4"></i>
+                <span class="text-xs tracking-wide">Action Items</span>
+            </a>
+            <a class="flex items-center gap-3 px-3.5 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all" href="../meetwise_ai_analytics_dashboard/code.html">
+                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                <span class="text-xs tracking-wide">Analytics</span>
+            </a>
+            <a class="flex items-center gap-3 px-3.5 py-3 bg-white/5 text-white font-semibold rounded-xl border border-white/5 transition-all" href="../meetwise_ai_settings/code.html">
+                <i data-lucide="settings" class="w-4 h-4 text-primary"></i>
+                <span class="text-xs tracking-wide">Settings</span>
+            </a>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="mt-auto flex flex-col gap-1 pt-4 border-t border-white/5">
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white transition-colors text-xs" href="#">
+                <i data-lucide="help-circle" class="w-4 h-4"></i> Support
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-400 hover:text-white transition-colors text-xs" href="../meetwise_ai_login/code.html">
+                <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 md:ml-[250px] pt-[72px] md:pt-0 min-h-screen relative">
+        <div class="max-w-4xl mx-auto px-6 py-8 md:py-12 flex flex-col gap-8">
+            <!-- Header -->
+            <header>
+                <h2 class="font-display text-2xl font-bold text-white tracking-tight">Profile Settings</h2>
+                <p class="text-xs text-gray-400 mt-1">Configure your personal parameters and calendar synchronizations.</p>
+            </header>
+
+            <!-- Bento Content layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Left panel (Identity, Integrations) - 4 cols -->
+                <div class="lg:col-span-4 flex flex-col gap-6">
+                    <!-- Profile avatar card -->
+                    <div class="glass-card rounded-2xl p-6 flex flex-col items-center text-center relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-primary/20 to-pinky/20"></div>
+                        <div class="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/10 mt-6 mb-4 group cursor-pointer">
+                            <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" alt="Alex Mercer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi_eZUzTUxjU6eBdOBAg1TCAXxj52AsGDUcKk0jRnJhAHmZiQDtZfoooOEDKZPiX2a5LfrnNPil45yNSSt9G4vvMFo8IP1xwcCjcVjUG-ZEuVftKaUJOUwHE3zKeIsmDr6am2E2XcsK7dPAuENd3VEvwhp6aBz9zBJ5nVsOnwclLLOCWNXPDVDspGrWI44XqtTmxF5VGf02r-6ni2J7pT9QjOV8p30UOMJ9IIqfqb2tq3Z3qjBR_f13ZUsHZtnHsUj3BOgiI1916s"/>
+                            <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                                <i data-lucide="camera" class="text-white w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <h3 class="font-display text-base font-bold text-white">Alex Mercer</h3>
+                        <p class="text-xs text-primary font-medium mt-0.5">Product Director</p>
+                        <div class="mt-4 w-full px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/5 text-[10px] text-gray-400 flex items-center justify-center gap-1.5 uppercase font-semibold">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-accent"></i> San Francisco, CA
+                        </div>
+                    </div>
+
+                    <!-- Calendars -->
+                    <div class="glass-card rounded-2xl p-6 flex flex-col gap-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-primary"></i> Calendar Integrations
+                        </h4>
+                        <div class="space-y-3">
+                            <!-- Google Calendar -->
+                            <div class="flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-white/10 p-1">
+                                        <img class="w-full h-full object-contain" alt="Google Calendar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWXg_BHNl9yd5Tnn4NwWdZVNHq5FQ72bsogO7BkiRGJhndFUl73harSwJ9JGEY4SDglkbkcqXd2rSZkbWf7_RZ7o6K3zpkQjPwbphxCBsAxEAn6frcKAAdUg1qU4cHuAq-mjvJ4MrPdEFtTyoxVNxjaa7MX8WFbI6yiKIBt5QJ2z4DT_oZxO5y6mkjSQqj0-oAF8ZdMdnsniPas9Yz2DNnNG2BkKvZsf4HQLb2mmhEzgdmKP5sgLKBGyasgh6x02cGR-VfmG129t8"/>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-semibold text-white leading-tight">Google Cal</p>
+                                        <p class="text-[9px] text-accent font-bold uppercase mt-0.5">Connected</p>
+                                    </div>
+                                </div>
+                                <button class="text-gray-500 hover:text-pinky transition-colors" title="Disconnect">
+                                    <i data-lucide="link-2-off" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <!-- Outlook -->
+                            <div class="flex items-center justify-between p-3 rounded-xl border border-white/5 bg-white/5 hover:border-white/10 transition-colors cursor-pointer group">
+                                <div class="flex items-center gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
+                                    <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-white/10 p-1">
+                                        <img class="w-full h-full object-contain" alt="Outlook Calendar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxVzINn-nlzWBxeRngBx3hLDQHG5VOU2cknWOt0F__LxXH4Ce0QbuoiJHpJHHQJNG7UpbBG_wzEyl-vkEMpRr6sMk2CF4PUYd6S_YoPSIKsBO_yvoHjCJpntx8vK0V7-bnCn7MKzGgUVardm7pbhCAvy8th1d-a-hiqxBtx-V8sGKLYykctF3JOQ24vyQT7-pM425nCfYl54Py2199G6O5Ue6Wh-oTDO0TSpVsZ0ogYsHauu-8BCxRILoCbUzZEBb_0qScyBF6Xs8"/>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-semibold text-white leading-tight">Outlook</p>
+                                        <p class="text-[9px] text-gray-500 font-bold uppercase mt-0.5">Disconnected</p>
+                                    </div>
+                                </div>
+                                <button class="text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i data-lucide="link-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right panel (Forms) - 8 cols -->
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <!-- Personal Info Card -->
+                    <div class="glass-card rounded-2xl p-6 relative">
+                        <div class="flex justify-between items-center mb-6">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                                <i data-lucide="user" class="w-4 h-4 text-primary"></i> Personal Details
+                            </h4>
+                            <button class="text-primary hover:text-white hover:bg-white/5 border border-primary/20 rounded-lg px-2.5 py-1 text-xs transition-colors flex items-center gap-1.5">
+                                <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
+                            </button>
+                        </div>
+                        <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- First Name -->
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[10px] font-bold uppercase tracking-wider text-gray-500">First Name</label>
+                                <input class="bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-primary/50 transition-all shadow-inner" readonly type="text" value="Alex"/>
+                            </div>
+                            <!-- Last Name -->
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Last Name</label>
+                                <input class="bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-primary/50 transition-all shadow-inner" readonly type="text" value="Mercer"/>
+                            </div>
+                            <!-- Email -->
+                            <div class="flex flex-col gap-1.5 md:col-span-2">
+                                <label class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Email Address</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
+                                        <i data-lucide="mail" class="w-4 h-4"></i>
+                                    </div>
+                                    <input class="bg-white/5 border border-white/5 rounded-xl pl-10 pr-4 py-2.5 w-full text-xs text-white focus:outline-none focus:border-primary/50 transition-all shadow-inner" readonly type="email" value="alex.mercer@company.com"/>
+                                </div>
+                            </div>
+                            <!-- Phone -->
+                            <div class="flex flex-col gap-1.5 md:col-span-2">
+                                <label class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Phone Number</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
+                                        <i data-lucide="phone" class="w-4 h-4"></i>
+                                    </div>
+                                    <input class="bg-white/5 border border-white/5 rounded-xl pl-10 pr-4 py-2.5 w-full text-xs text-white focus:outline-none focus:border-primary/50 transition-all shadow-inner" readonly type="tel" value="+1 (555) 123-4567"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Company details card -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                                <i data-lucide="briefcase" class="w-4 h-4 text-primary"></i> Company Details
+                            </h4>
+                            <button class="text-primary hover:text-white hover:bg-white/5 border border-primary/20 rounded-lg px-2.5 py-1 text-xs transition-colors flex items-center gap-1.5">
+                                <i data-lucide="edit" class="w-3.5 h-3.5"></i> Edit
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Organization info widget -->
+                            <div class="flex flex-col gap-1.5 md:col-span-2">
+                                <label class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Organization</label>
+                                <div class="flex items-center gap-3 bg-white/5 border border-white/5 rounded-xl p-3 shadow-inner">
+                                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center text-primary">
+                                        <i data-lucide="building" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-semibold text-white">Acme Corporation</p>
+                                        <p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">Enterprise Plan</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Role -->
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Role / Title</label>
+                                <input class="bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-primary/50 transition-all shadow-inner" readonly type="text" value="Product Director"/>
+                            </div>
+                            <!-- Department -->
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Department</label>
+                                <select class="bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-primary/50 transition-all shadow-inner appearance-none cursor-not-allowed opacity-80" disabled>
+                                    <option>Product Management</option>
+                                    <option>Engineering</option>
+                                    <option>Design</option>
+                                    <option>Marketing</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Init Lucide
+        lucide.createIcons();
+
+        // Responsive Mobile Menu script
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const closeBtn = document.getElementById('mobile-close-btn');
+            const sidebar = document.getElementById('sidebar');
+
+            function toggleMenu() {
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.remove('-translate-x-full');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            }
+
+            mobileBtn.addEventListener('click', toggleMenu);
+            closeBtn.addEventListener('click', toggleMenu);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>MeetWise AI - Powering the Future of Work</title>
+    <meta name="description" content="Transform meeting chaos into structured organizational intelligence with MeetWise AI." />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS with CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        background: "#050505",
+                        surface: "#0a0a0c",
+                        "surface-card": "rgba(13, 13, 17, 0.45)",
+                        primary: "#8B5CF6", // purple
+                        secondary: "#3B82F6", // blue
+                        accent: "#06B6D4", // cyan
+                        pinky: "#EC4899", // pink
+                        "on-background": "#F3F4F6",
+                        "on-surface": "#E5E7EB",
+                        outline: "rgba(255, 255, 255, 0.05)",
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        lg: "0.75rem",
+                        xl: "1rem",
+                        "2xl": "1.5rem",
+                        "3xl": "2rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        display: ["Sora", "Space Grotesk", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            color: #F3F4F6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .cosmic-grid {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+            transition: all 1s ease-in-out;
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 50%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass-card {
+            background: rgba(13, 13, 17, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+            transform: translateY(-4px);
+        }
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        /* Custom scroll reveal styling */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal-on-scroll.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Mouse glow */
+        #mouse-glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, rgba(59, 130, 246, 0.03) 50%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        .animate-float {
+            animation: float 8s ease-in-out infinite;
+        }
+        .animate-float-delayed {
+            animation: float 10s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative antialiased selection:bg-primary/30 selection:text-white">
+    <!-- Mouse Glow & Background Effects -->
+    <div id="mouse-glow"></div>
+    <div class="absolute inset-0 cosmic-grid pointer-events-none z-0"></div>
+
+    <!-- Background Orbs -->
+    <div class="gradient-orb w-[600px] h-[600px] bg-primary top-[-100px] left-[-200px] animate-pulse" style="animation-duration: 12s;"></div>
+    <div class="gradient-orb w-[500px] h-[500px] bg-secondary top-[400px] right-[-100px] animate-pulse" style="animation-duration: 15s; animation-delay: 3s;"></div>
+    <div class="gradient-orb w-[600px] h-[600px] bg-pinky bottom-[200px] left-[10%] animate-pulse" style="animation-duration: 20s;"></div>
+
+    <!-- Navbar -->
+    <header class="glass-nav fixed top-0 w-full z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer">
+                <div class="w-8 h-8 rounded bg-gradient-to-tr from-primary via-secondary to-pinky flex items-center justify-center shadow-lg shadow-primary/20">
+                    <i data-lucide="sparkles" class="text-white w-5 h-5"></i>
+                </div>
+                <span class="font-display text-xl font-bold tracking-tight text-white bg-clip-text">MeetWise AI</span>
+            </div>
+            <nav class="hidden md:flex gap-8 items-center">
+                <a class="font-medium text-sm text-gray-400 hover:text-white transition-colors relative group py-2" href="#">
+                    Features
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a class="font-medium text-sm text-gray-400 hover:text-white transition-colors relative group py-2" href="../meetwise_ai_dashboard/code.html">
+                    Workspace
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a class="font-medium text-sm text-gray-400 hover:text-white transition-colors relative group py-2" href="../meetwise_ai_analytics_dashboard/code.html">
+                    Analytics
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a class="font-medium text-sm text-gray-400 hover:text-white transition-colors relative group py-2" href="../meetwise_ai_settings/code.html">
+                    Security
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a class="font-medium text-sm text-gray-300 hover:text-white transition-colors hidden sm:block" href="../meetwise_ai_login/code.html">Sign In</a>
+                <a class="bg-white text-black px-5 py-2 rounded-full font-semibold text-sm hover:bg-transparent hover:text-white border border-white transition-all duration-300 shadow-lg shadow-white/5 hover:scale-105" href="../meetwise_ai_login/code.html">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 pt-32 pb-24">
+        <!-- HERO SECTION -->
+        <section class="max-w-7xl mx-auto px-6 mb-32 flex flex-col items-center text-center relative">
+            <div class="absolute w-[400px] h-[400px] bg-primary/10 rounded-full blur-[80px] -z-10 animate-float"></div>
+            <!-- Animated Badge -->
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-semibold uppercase tracking-wider mb-6 animate-pulse">
+                <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                MeetWise AI v2.0 is Live
+            </div>
+            
+            <h1 class="font-display text-4xl sm:text-6xl lg:text-[72px] font-bold tracking-tight text-white mb-6 leading-tight max-w-5xl">
+                Powering the Future of <span class="text-gradient">Meeting Intelligence</span>
+            </h1>
+            <p class="text-gray-400 text-lg sm:text-xl max-w-3xl mb-10 leading-relaxed font-light">
+                Redefining productivity with ambient AI workflows. From multi-modal speech transcription to instant task assignment, MeetWise AI handles the overhead so you can execute.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 mb-20">
+                <a class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg hover:shadow-primary/30 transition-all hover:scale-105 flex items-center gap-2" href="../meetwise_ai_login/code.html">
+                    Start Processing Free <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
+                <a class="bg-surface-card border border-white/10 px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-all flex items-center gap-2 text-white" href="#problem">
+                    See the Journey
+                </a>
+            </div>
+
+            <!-- Floating Dashboard Preview Container -->
+            <div class="relative w-full max-w-5xl aspect-[16/10] rounded-2xl p-3 bg-gradient-to-b from-white/10 to-white/0 border border-white/10 shadow-2xl shadow-primary/5 animate-float overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent z-10"></div>
+                <img class="w-full h-full object-cover rounded-xl" alt="MeetWise AI Dashboard Interface Mockup" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAESvERSULomKMBMKserTjf2FUv2z6PhvFZPGmZridbt7FmmeT2w3J3ebX-oANuACMXogjvJfbx6mv1cT7d_a65-8rBnoBTS_z4xD0Gb3mdcvSsIZStzOQx_ZgCLf9sGEi1rW5Z3MWzc6I9I74K414dBs9CP-CsSlTZG9TdR7Dd0UNVVt0cSnZl33S85XmmAlReou0VAlQU6h97dxD7o6r0r7wGtI7eCIC2YyhkZWMjqrl9CuODiwzWn2YENaWl3lkXBFjt5Y6Yl2E"/>
+            </div>
+        </section>
+
+        <!-- THE PROBLEM SECTION -->
+        <section id="problem" class="max-w-7xl mx-auto px-6 mb-32 reveal-on-scroll">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs uppercase tracking-widest text-pinky font-semibold">The Friction</span>
+                <h2 class="font-display text-3xl sm:text-4xl font-bold text-white mt-2">The Hidden Cost of Traditional Meetings</h2>
+                <p class="text-gray-400 mt-4">Unstructured conversations lead to organizational latency. Here is what modern enterprise teams suffer from everyday:</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Friction Card 1 -->
+                <div class="glass-card rounded-2xl p-8 flex flex-col gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-pinky/10 flex items-center justify-center text-pinky">
+                        <i data-lucide="clock" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-white">Hours Lost in Synthesis</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Teams spend up to 4 hours per week manually summarizing meetings, chasing action items, and aligning stakeholders.
+                    </p>
+                </div>
+                <!-- Friction Card 2 -->
+                <div class="glass-card rounded-2xl p-8 flex flex-col gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                        <i data-lucide="alert-circle" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-white">Forgotten Accountability</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Over 37% of critical decisions made during live meetings are documented incorrectly or fail to get assigned to roles.
+                    </p>
+                </div>
+                <!-- Friction Card 3 -->
+                <div class="glass-card rounded-2xl p-8 flex flex-col gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+                        <i data-lucide="shuffle" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-white">Context Fragmentation</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Transcripts, tasks, and calendars reside in disconnected platforms, making retrieval of historical decisions painful.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTRODUCING THE SOLUTION -->
+        <section class="max-w-7xl mx-auto px-6 mb-32 reveal-on-scroll relative">
+            <div class="absolute w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[100px] -z-10 left-1/2 -translate-x-1/2"></div>
+            
+            <div class="glass-card rounded-3xl p-8 md:p-16 flex flex-col lg:flex-row items-center gap-12 border border-white/10 relative overflow-hidden">
+                <div class="flex-1 flex flex-col gap-6 relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-white max-w-fit">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-accent"></i> Ambient Intelligence
+                    </div>
+                    <h2 class="font-display text-3xl sm:text-5xl font-bold text-white leading-tight">
+                        MeetWise AI: The Intelligent Partner for High-Performance Teams
+                    </h2>
+                    <p class="text-gray-400 leading-relaxed font-light">
+                        We don't just capture transcripts. We digest verbal interactions, map context, auto-route role-based action items, detect calendar conflicts, and deliver unified organizational analytics. It's like giving your enterprise its own administrative autopilot.
+                    </p>
+                    <div class="flex flex-wrap gap-4 mt-2">
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i data-lucide="check" class="w-4 h-4 text-accent"></i> Real-time diarized capture
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i data-lucide="check" class="w-4 h-4 text-accent"></i> End-to-end cloud encryption
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i data-lucide="check" class="w-4 h-4 text-accent"></i> Active webhook sync
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 relative z-10 w-full max-w-md">
+                    <!-- Core Glow Illustration -->
+                    <div class="aspect-square bg-gradient-to-tr from-primary via-pinky to-secondary rounded-full filter blur-2xl opacity-20 absolute inset-0 animate-pulse"></div>
+                    <div class="relative z-10 border border-white/10 rounded-2xl p-6 bg-surface/80 backdrop-blur-xl flex flex-col gap-4 shadow-2xl">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-gray-400">PROCESSING SIGNAL</span>
+                            <span class="w-2 h-2 rounded-full bg-accent animate-ping"></span>
+                        </div>
+                        <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-primary to-accent h-full w-[72%] rounded-full animate-pulse"></div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-sm border-b border-white/5 pb-2">
+                                <span class="text-gray-400">Active Speaker</span>
+                                <span class="text-white font-medium">Sarah Jenkins</span>
+                            </div>
+                            <div class="flex justify-between text-sm border-b border-white/5 pb-2">
+                                <span class="text-gray-400">Context Confidence</span>
+                                <span class="text-accent font-medium">99.4%</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">Extracted Actions</span>
+                                <span class="text-primary font-medium">3 Tasks Found</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CORE CAPABILITIES (FEATURES) -->
+        <section class="max-w-7xl mx-auto px-6 mb-32 reveal-on-scroll">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs uppercase tracking-widest text-accent font-semibold">System Features</span>
+                <h2 class="font-display text-3xl sm:text-4xl font-bold text-white mt-2">Intelligent Infrastructure Built to Scale</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Cap 1: AI Summaries -->
+                <div class="glass-card rounded-2xl p-8 flex flex-col gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-white">AI Summaries</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Instantly extract core discussion metrics, strategic alignment notes, and critical project decisions from any sync.
+                    </p>
+                </div>
+                <!-- Cap 2: Real-time Transcription -->
+                <div class="glass-card rounded-2xl p-8 flex flex-col gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+                        <i data-lucide="mic" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-white">Transcription</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Highly detailed speech-to-text diarization capturing speaker identities, voice changes, and timestamps with clarity.
+                    </p>
+                </div>
+                <!-- Cap 3: Smart Scheduling -->
+                <div class="glass-card rounded-2xl p-8 flex flex-col gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                        <i data-lucide="calendar" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-white">Smart Scheduling</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Automatic multi-calendar conflict detection and scheduling based on context, work habits, and team timezones.
+                    </p>
+                </div>
+                <!-- Cap 4: Role-Based Tasks -->
+                <div class="glass-card rounded-2xl p-8 flex flex-col gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-pinky/10 flex items-center justify-center text-pinky">
+                        <i data-lucide="user-check" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-white">Role-Based Tasks</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        AI tracks accountability by mapping task descriptions to designated department roles, eliminating process gaps.
+                    </p>
+                </div>
+                <!-- Cap 5: Meeting Analytics -->
+                <div class="glass-card rounded-2xl p-8 flex flex-col gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-white">Meeting Analytics</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Comprehensive organization dashboards summarizing time allocations, focus slots, engagement, and keywords.
+                    </p>
+                </div>
+                <!-- Cap 6: Enterprise Security -->
+                <div class="glass-card rounded-2xl p-8 flex flex-col gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                        <i data-lucide="shield" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold text-white">Compliance & Trust</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Your meeting archives are private, end-to-end encrypted, and hosted in fully compliant SOC2 and GDPR environments.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SYSTEM WORKFLOW (HOW IT WORKS) -->
+        <section class="max-w-7xl mx-auto px-6 mb-32 reveal-on-scroll">
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <span class="text-xs uppercase tracking-widest text-primary font-semibold">The Flow</span>
+                <h2 class="font-display text-3xl sm:text-4xl font-bold text-white mt-2">Connecting Your Workspace Ecosystem</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 relative">
+                <!-- Line indicator for flow on large screens -->
+                <div class="hidden lg:block absolute top-1/2 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-primary/10 via-secondary/20 to-pinky/10 -z-10"></div>
+                
+                <!-- Step 1 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col items-center text-center relative bg-surface/90">
+                    <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm mb-4">1</div>
+                    <h4 class="font-display text-lg font-semibold text-white mb-2">Connect Platform</h4>
+                    <p class="text-gray-400 text-xs">Integrate Google Workspace, Microsoft Teams, or upload direct audio files.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col items-center text-center relative bg-surface/90">
+                    <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-secondary font-bold text-sm mb-4">2</div>
+                    <h4 class="font-display text-lg font-semibold text-white mb-2">Capture Meeting</h4>
+                    <p class="text-gray-400 text-xs">Our ambient diarization model records and distinguishes voices live.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col items-center text-center relative bg-surface/90">
+                    <div class="w-10 h-10 rounded-full bg-pinky/20 flex items-center justify-center text-pinky font-bold text-sm mb-4">3</div>
+                    <h4 class="font-display text-lg font-semibold text-white mb-2">AI Synthesizes</h4>
+                    <p class="text-gray-400 text-xs">Instantly map transcripts, project summaries, and action assignments.</p>
+                </div>
+                <!-- Step 4 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col items-center text-center relative bg-surface/90">
+                    <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-sm mb-4">4</div>
+                    <h4 class="font-display text-lg font-semibold text-white mb-2">Sync & Execute</h4>
+                    <p class="text-gray-400 text-xs">Tasks automatically route to Slack, Jira, Notion, or internal dashboards.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ANALYTICS PREVIEW SECTION -->
+        <section class="max-w-7xl mx-auto px-6 mb-32 reveal-on-scroll">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-5 flex flex-col gap-6">
+                    <span class="text-xs uppercase tracking-widest text-secondary font-semibold">Deep Context</span>
+                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Visualizing Your Team's Productivity</h2>
+                    <p class="text-gray-400 leading-relaxed font-light">
+                        Unlock patterns across all company discussions. Understand time allocations, track task completion percentages, monitor focus blocks, and identify key discussed keywords automatically parsed via NLP models.
+                    </p>
+                    <a class="text-primary hover:text-white transition-all font-semibold flex items-center gap-2" href="../meetwise_ai_analytics_dashboard/code.html">
+                        Access Analytics Suite <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+                <div class="lg:col-span-7">
+                    <div class="glass-card rounded-2xl p-8 relative overflow-hidden">
+                        <div class="absolute w-40 h-40 bg-secondary/10 rounded-full blur-2xl top-10 right-10"></div>
+                        <h4 class="font-display text-lg font-semibold text-white mb-6 flex items-center gap-2">
+                            <i data-lucide="activity" class="w-5 h-5 text-accent"></i> Time Allocation & Sentiment
+                        </h4>
+                        <!-- Mock Charts -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
+                            <div class="flex flex-col items-center gap-4">
+                                <div class="relative w-36 h-36 rounded-full border-[10px] border-white/5 flex items-center justify-center" style="border-top-color: #8B5CF6; border-right-color: #3B82F6; transform: rotate(45deg);">
+                                    <div class="absolute w-full h-full rounded-full flex items-center justify-center" style="transform: rotate(-45deg);">
+                                        <div class="text-center">
+                                            <span class="block text-2xl font-bold text-white">82%</span>
+                                            <span class="text-[10px] text-gray-400 uppercase">Focus Rate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4 text-xs text-gray-400">
+                                    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded bg-primary"></span> Internal</span>
+                                    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded bg-secondary"></span> Client</span>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-gray-400">Task Completion Rate</span>
+                                        <span class="text-white font-medium">94%</span>
+                                    </div>
+                                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                                        <div class="bg-accent h-full w-[94%] rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-gray-400">Team Sentiment Score</span>
+                                        <span class="text-white font-medium">8.6/10</span>
+                                    </div>
+                                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                                        <div class="bg-primary h-full w-[86%] rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-gray-400">Meeting Overlap Conflict</span>
+                                        <span class="text-white font-medium">0%</span>
+                                    </div>
+                                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                                        <div class="bg-emerald-500 h-full w-[0%] rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECURITY & COMPLIANCE -->
+        <section class="max-w-7xl mx-auto px-6 mb-32 reveal-on-scroll">
+            <div class="glass-card rounded-3xl p-8 md:p-16 border border-white/10 relative overflow-hidden bg-gradient-to-tr from-surface via-surface to-primary/5">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] -z-10"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="flex flex-col gap-6">
+                        <span class="text-xs uppercase tracking-widest text-emerald-400 font-semibold flex items-center gap-1">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Enterprise Grade Protection
+                        </span>
+                        <h2 class="font-display text-3xl sm:text-4xl font-bold text-white">Your Data. Protected Everywhere.</h2>
+                        <p class="text-gray-400 font-light leading-relaxed">
+                            Security is not a secondary consideration. We ensure compliance with strict privacy standards. Audio streams, transcript data, calendar integrations, and platform events are protected by enterprise security patterns.
+                        </p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex items-center gap-2 text-sm text-gray-300">
+                                <div class="w-6 h-6 rounded bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i data-lucide="lock" class="w-3.5 h-3.5"></i></div>
+                                AES-256 Encryption
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-300">
+                                <div class="w-6 h-6 rounded bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i></div>
+                                SOC2 Type II Certified
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-300">
+                                <div class="w-6 h-6 rounded bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i data-lucide="globe" class="w-3.5 h-3.5"></i></div>
+                                GDPR & CCPA Compliant
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-300">
+                                <div class="w-6 h-6 rounded bg-emerald-500/10 flex items-center justify-center text-emerald-400"><i data-lucide="user-minus" class="w-3.5 h-3.5"></i></div>
+                                Zero Data Retention Option
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
+                        <!-- Shield Grid Illustration -->
+                        <div class="w-72 h-72 rounded-full border border-white/5 flex items-center justify-center relative bg-surface/50">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-full filter blur-xl animate-pulse"></div>
+                            <div class="w-48 h-48 rounded-full border border-white/10 flex items-center justify-center bg-background/50">
+                                <div class="w-24 h-24 rounded-2xl bg-gradient-to-tr from-primary to-pinky flex items-center justify-center text-white shadow-xl shadow-primary/20 animate-bounce" style="animation-duration: 4s;">
+                                    <i data-lucide="shield" class="w-12 h-12"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA CONTAINER -->
+        <section class="max-w-7xl mx-auto px-6 mb-20 text-center reveal-on-scroll">
+            <div class="glass-card rounded-3xl p-12 md:p-24 border border-white/10 relative overflow-hidden bg-gradient-to-b from-surface to-background">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-tr from-primary/10 to-pinky/10 rounded-full filter blur-[100px] -z-10"></div>
+                <h2 class="font-display text-4xl sm:text-6xl font-bold tracking-tight text-white mb-6">
+                    Redesign Your <span class="text-gradient">Meeting Culture</span> Today
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+                    Save time and establish absolute operational accountability across all workflows. Get started in less than two minutes.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
+                    <input class="w-full bg-white/5 border border-white/10 rounded-full px-6 py-3 font-body-sm text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-gray-500" placeholder="Enter your work email" type="email" />
+                    <a class="w-full sm:w-auto bg-white text-black px-8 py-3 rounded-full font-semibold whitespace-nowrap hover:bg-primary hover:text-white transition-all shadow-lg hover:scale-105" href="../meetwise_ai_login/code.html">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 relative z-10 bg-surface/50">
+        <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded bg-gradient-to-tr from-primary to-pinky flex items-center justify-center">
+                    <i data-lucide="sparkles" class="text-white w-5 h-5"></i>
+                </div>
+                <span class="font-display text-lg font-bold tracking-tight text-white">MeetWise AI</span>
+            </div>
+            <nav class="flex flex-wrap justify-center gap-8 text-sm text-gray-400">
+                <a class="hover:text-white transition-colors" href="#">Privacy Policy</a>
+                <a class="hover:text-white transition-colors" href="#">Terms of Service</a>
+                <a class="hover:text-white transition-colors" href="#">Security Standards</a>
+                <a class="hover:text-white transition-colors" href="#">Contact Sales</a>
+            </nav>
+            <div class="text-sm text-gray-500">© 2026 MeetWise AI. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Scripts for Scroll Reveal & Mouse Glow -->
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Mouse follow glow effect
+        const glow = document.getElementById('mouse-glow');
+        if (window.matchMedia("(pointer: fine)").matches) {
+            glow.style.display = 'block';
+            window.addEventListener('mousemove', (e) => {
+                glow.style.left = e.clientX + 'px';
+                glow.style.top = e.clientY + 'px';
+            });
+        }
+
+        // Scroll reveal logic
+        const revealElements = document.querySelectorAll('.reveal-on-scroll');
+        function checkReveal() {
+            const triggerBottom = window.innerHeight * 0.9;
+            revealElements.forEach(el => {
+                const elTop = el.getBoundingClientRect().top;
+                if (elTop < triggerBottom) {
+                    el.classList.add('active');
+                }
+            });
+        }
+        window.addEventListener('scroll', checkReveal);
+        // Run initial check
+        checkReveal();
+
+        // Navbar translucent change on scroll
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-xl', 'bg-background/80');
+            } else {
+                header.classList.remove('shadow-xl', 'bg-background/80');
+            }
+        });
+    </script>
+</body>
+</html>
