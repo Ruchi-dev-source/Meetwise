@@ -1,35 +1,6 @@
 {
-  "version": 2,
-  "buildCommand": "echo 'Static site – no build step'",
-  "outputDirectory": ".",
-  "routes": [
-    {
-      "src": "/",
-      "dest": "/meetwise_ai_features/code.html"
-    },
-    {
-      "src": "/login",
-      "dest": "/meetwise_ai_login/code.html"
-    },
-    {
-      "src": "/dashboard",
-      "dest": "/meetwise_ai_dashboard/code.html"
-    },
-    {
-      "src": "/analytics",
-      "dest": "/meetwise_ai_analytics_dashboard/code.html"
-    },
-    {
-      "src": "/meeting",
-      "dest": "/meetwise_ai_meeting_details/code.html"
-    },
-    {
-      "src": "/profile",
-      "dest": "/meetwise_ai_profile/code.html"
-    },
-    {
-      "src": "/settings",
-      "dest": "/meetwise_ai_settings/code.html"
-    }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
