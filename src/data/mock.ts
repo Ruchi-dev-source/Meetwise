@@ -2,6 +2,7 @@ import type {
   ActionItem,
   Attendee,
   Meeting,
+  NotificationItem,
   TopicTag,
   TranscriptLine,
   WeeklyMeetingCount,
@@ -73,6 +74,7 @@ export const actionItems: ActionItem[] = [
     dueLabel: "Today",
     status: "pending",
     meetingTitle: "Client Onboarding — Halcyon Co.",
+    stage: "todo",
   },
   {
     id: "a-2",
@@ -81,6 +83,7 @@ export const actionItems: ActionItem[] = [
     dueLabel: "Fri, Jul 10",
     status: "pending",
     meetingTitle: "Design System Sync",
+    stage: "in-progress",
   },
   {
     id: "a-3",
@@ -89,6 +92,7 @@ export const actionItems: ActionItem[] = [
     dueLabel: "Mon, Jul 13",
     status: "pending",
     meetingTitle: "Q4 Strategy Sync",
+    stage: "in-progress",
   },
   {
     id: "a-4",
@@ -97,6 +101,25 @@ export const actionItems: ActionItem[] = [
     dueLabel: "Jul 2",
     status: "completed",
     meetingTitle: "Q4 Strategy Sync",
+    stage: "done",
+  },
+  {
+    id: "a-5",
+    title: "Confirm two-phase release plan with engineering",
+    owner: attendees[2],
+    dueLabel: "Tomorrow",
+    status: "pending",
+    meetingTitle: "Q4 Strategy Sync",
+    stage: "todo",
+  },
+  {
+    id: "a-6",
+    title: "Archive Q2 onboarding transcripts",
+    owner: attendees[0],
+    dueLabel: "Jun 28",
+    status: "completed",
+    meetingTitle: "Design System Sync",
+    stage: "done",
   },
 ];
 
@@ -155,4 +178,39 @@ export const topicMentions = [
   { label: "Marketing Campaign", mentions: 15, colorClass: "bg-accent" },
   { label: "UI/UX Refresh", mentions: 12, colorClass: "bg-purple-400" },
   { label: "Server Migration", mentions: 8, colorClass: "bg-emerald-400" },
+];
+
+export const notifications: NotificationItem[] = [
+  {
+    id: "n-1",
+    kind: "summary",
+    title: "AI summary ready",
+    detail: "Q4 Strategy Sync was processed with 3 action items extracted.",
+    timeLabel: "12m ago",
+    read: false,
+  },
+  {
+    id: "n-2",
+    kind: "task",
+    title: "Task due today",
+    detail: "Send updated pricing deck to Halcyon Co.",
+    timeLabel: "1h ago",
+    read: false,
+  },
+  {
+    id: "n-3",
+    kind: "meeting",
+    title: "Meeting starting soon",
+    detail: "Client Onboarding — Halcyon Co. begins in 15 minutes.",
+    timeLabel: "2h ago",
+    read: false,
+  },
+  {
+    id: "n-4",
+    kind: "system",
+    title: "Google Calendar synced",
+    detail: "42 upcoming events imported into your workspace.",
+    timeLabel: "Yesterday",
+    read: true,
+  },
 ];

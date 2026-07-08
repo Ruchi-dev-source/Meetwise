@@ -19,6 +19,7 @@ export interface Meeting {
 }
 
 export type TaskStatus = "pending" | "completed";
+export type TaskStage = "todo" | "in-progress" | "done";
 
 export interface ActionItem {
   id: string;
@@ -27,6 +28,7 @@ export interface ActionItem {
   dueLabel: string;
   status: TaskStatus;
   meetingTitle: string;
+  stage: TaskStage;
 }
 
 export interface TranscriptLine {
@@ -46,4 +48,15 @@ export interface WeeklyMeetingCount {
   label: string;
   count: number;
   active?: boolean;
+}
+
+export type NotificationKind = "task" | "meeting" | "summary" | "system";
+
+export interface NotificationItem {
+  id: string;
+  kind: NotificationKind;
+  title: string;
+  detail: string;
+  timeLabel: string;
+  read: boolean;
 }
