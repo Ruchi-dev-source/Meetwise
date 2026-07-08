@@ -19,6 +19,7 @@
 
   --font-display: "Sora", "Space Grotesk", "sans-serif";
   --font-sans: "Inter", "sans-serif";
+  --font-data: "JetBrains Mono", ui-monospace, monospace;
 
   --radius-card: 1rem;
   --radius-pill: 9999px;

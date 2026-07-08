@@ -1,5 +1,6 @@
 import { Users, Clock, Smile, ArrowUpRight, Calendar, ChevronDown, Download } from "lucide-react";
 import { BarChart } from "@/components/dashboard/BarChart";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { weeklyMeetingCounts, topicMentions } from "@/data/mock";
 
 const metrics = [
@@ -7,7 +8,7 @@ const metrics = [
     icon: Users,
     iconClass: "text-primary",
     label: "Total Meetings Processed",
-    value: "342",
+    value: 342,
     delta: "12%",
     note: "vs. previous 30-day window",
   },
@@ -15,7 +16,7 @@ const metrics = [
     icon: Clock,
     iconClass: "text-secondary",
     label: "Meeting Hours Saved",
-    value: "124",
+    value: 124,
     unit: "hrs",
     delta: "8%",
     note: "Parsed via AI synthesis timelines",
@@ -49,9 +50,9 @@ export function Analytics() {
               </div>
               <h3 className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">{m.label}</h3>
               <div className="flex items-baseline gap-3">
-                <span className="text-4xl font-bold text-white tracking-tight">
-                  {m.value}
-                  {m.unit && <span className="text-lg text-gray-400 ml-1 font-medium">{m.unit}</span>}
+                <span className="font-data text-4xl font-bold text-white tracking-tight tabular-nums">
+                  <AnimatedCounter value={m.value} />
+                  {m.unit && <span className="font-sans text-lg text-gray-400 ml-1 font-medium">{m.unit}</span>}
                 </span>
                 <span className="flex items-center gap-0.5 text-xs font-bold text-accent bg-accent/10 rounded-full px-2 py-0.5">
                   <ArrowUpRight className="w-3.5 h-3.5" /> {m.delta}
@@ -67,8 +68,9 @@ export function Analytics() {
             </div>
             <h3 className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">Average Workspace Sentiment</h3>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold text-white tracking-tight">
-                8.4<span className="text-lg text-gray-400 font-medium">/10</span>
+              <span className="font-data text-4xl font-bold text-white tracking-tight tabular-nums">
+                <AnimatedCounter value={8.4} decimals={1} />
+                <span className="font-sans text-lg text-gray-400 font-medium">/10</span>
               </span>
               <span className="text-xs font-bold text-primary bg-primary/10 rounded-full px-2.5 py-0.5">Positive</span>
             </div>
@@ -101,7 +103,7 @@ export function Analytics() {
                 }}
               >
                 <div className="w-24 h-24 bg-surface rounded-full flex flex-col items-center justify-center border border-white/5">
-                  <span className="text-xl font-bold text-white">342</span>
+                  <span className="font-data text-xl font-bold text-white tabular-nums">342</span>
                   <span className="text-[8px] text-gray-500 uppercase tracking-widest">Processed</span>
                 </div>
               </div>

@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export function StatCard({
@@ -12,7 +13,7 @@ export function StatCard({
   icon: LucideIcon;
   iconClass: string;
   eyebrow: string;
-  value: string;
+  value: ReactNode;
   label: string;
   featured?: boolean;
 }) {
@@ -33,7 +34,7 @@ export function StatCard({
         </span>
       </div>
       <div className="relative z-10">
-        <p className="text-3xl font-bold text-white leading-none mb-1">{value}</p>
+        <p className="font-data text-3xl font-bold text-white leading-none mb-1 tabular-nums">{value}</p>
         <p className={cn("text-xs", featured ? "text-primary-200" : "text-gray-400")}>{label}</p>
       </div>
     </div>

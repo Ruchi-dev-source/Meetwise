@@ -24,6 +24,8 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Reveal } from "@/components/ui/Reveal";
 import { FeatureCard } from "@/components/marketing/FeatureCard";
+import { TimelineConnector } from "@/components/marketing/TimelineConnector";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 
 const frictionCards = [
@@ -290,7 +292,7 @@ export function Home() {
         </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 relative">
-          <div className="hidden lg:block absolute top-1/2 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-primary/10 via-secondary/20 to-pinky/10 -z-10" />
+          <TimelineConnector />
           {workflowSteps.map((s, i) => (
             <Reveal key={s.step} delay={i * 0.1}>
               <GlassCard className="flex flex-col items-center text-center bg-surface/90">
@@ -339,7 +341,9 @@ export function Home() {
                   >
                     <div className="absolute w-full h-full rounded-full flex items-center justify-center" style={{ transform: "rotate(-45deg)" }}>
                       <div className="text-center">
-                        <span className="block text-2xl font-bold text-white">82%</span>
+                        <span className="font-data block text-2xl font-bold text-white tabular-nums">
+                          <AnimatedCounter value={82} suffix="%" />
+                        </span>
                         <span className="text-[10px] text-gray-400 uppercase">Focus Rate</span>
                       </div>
                     </div>

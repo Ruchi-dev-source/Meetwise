@@ -40,7 +40,7 @@ export function DonutChart({
         })}
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-xl font-bold text-white">{centerValue}</span>
+        <span className="font-data text-xl font-bold text-white">{centerValue}</span>
         <span className="text-[8px] text-gray-500 uppercase tracking-widest">{centerLabel}</span>
       </div>
     </div>

@@ -113,7 +113,7 @@ export function MeetingDetails() {
                       </span>
                     )}
                   </div>
-                  <span className="text-[10px] text-gray-500 hover:text-primary cursor-pointer">{line.timestamp}</span>
+                  <span className="font-data text-[10px] text-gray-500 hover:text-primary cursor-pointer">{line.timestamp}</span>
                 </div>
                 <p className={cn("text-xs leading-relaxed font-light mt-1", line.active ? "text-gray-300" : "text-gray-400")}>
                   {line.text}
@@ -134,7 +134,7 @@ export function MeetingDetails() {
               <div className="absolute left-0 top-0 h-full bg-primary w-[15%] rounded-full" />
               <div className="absolute left-[15%] -top-1 w-3.5 h-3.5 bg-white rounded-full scale-0 group-hover:scale-100 transition-transform" />
             </div>
-            <span className="text-[10px] text-gray-400 font-bold">02:14 / 45:00</span>
+            <span className="font-data text-[10px] text-gray-400 font-bold tabular-nums">02:14 / 45:00</span>
           </div>
         </section>
 
