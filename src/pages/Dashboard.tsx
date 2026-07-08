@@ -9,12 +9,17 @@ import {
   Check,
   Sparkles,
   Loader,
+  LayoutGrid,
 } from "lucide-react";
 import { AppTopbar } from "@/components/layout/AppTopbar";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { DonutChart } from "@/components/dashboard/DonutChart";
+import { TaskBoard } from "@/components/dashboard/TaskBoard";
+import { MiniCalendar } from "@/components/dashboard/MiniCalendar";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { cn } from "@/lib/utils";
-import { meetings, actionItems, currentUser } from "@/data/mock";
+import { meetings, actionItems as initialActionItems, currentUser } from "@/data/mock";
+import type { TaskStage } from "@/lib/types";
 
 const timeAllocation = [
   { label: "Internal Syncs", value: 65, colorClass: "text-primary", dotClass: "bg-primary", hours: "12h" },
@@ -26,8 +31,9 @@ export function Dashboard() {
   const [search, setSearch] = useState("");
   const [dragging, setDragging] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
+  const [tasks, setTasks] = useState(initialActionItems);
 
-  const pendingTasks = useMemo(() => actionItems.filter((t) => t.status === "pending").length, []);
+  const pendingTasks = useMemo(() => tasks.filter((t) => t.status === "pending").length, [tasks]);
   const upcoming = useMemo(() => meetings.filter((m) => m.status !== "past").length, []);
 
   function handleDrop(e: DragEvent<HTMLDivElement>) {
@@ -35,6 +41,12 @@ export function Dashboard() {
     setDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) setUploadedFile(file.name);
+  }
+
+  function handleStageChange(id: string, stage: TaskStage) {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, stage, status: stage === "done" ? "completed" : "pending" } : t))
+    );
   }
 
   const firstName = currentUser.name.split(" ")[0];
@@ -65,21 +77,21 @@ export function Dashboard() {
               icon={Video}
               iconClass="bg-primary/10 text-primary"
               eyebrow="Today"
-              value={String(upcoming)}
+              value={<AnimatedCounter value={upcoming} />}
               label="Upcoming Syncs"
             />
             <StatCard
               icon={CheckSquare}
               iconClass="bg-secondary/10 text-secondary"
               eyebrow="Action Req."
-              value={String(pendingTasks)}
+              value={<AnimatedCounter value={pendingTasks} />}
               label="Pending Tasks"
             />
             <StatCard
               icon={TrendingUp}
               iconClass="bg-white/10 text-white"
               eyebrow="Excellent"
-              value="94%"
+              value={<AnimatedCounter value={94} suffix="%" />}
               label="Productivity Score"
               featured
             />
@@ -203,6 +215,22 @@ export function Dashboard() {
               ))}
             </div>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <section className="lg:col-span-8 glass-card rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-display text-lg font-bold text-white flex items-center gap-2">
+                <LayoutGrid className="w-4 h-4 text-primary" /> Task Board
+              </h3>
+              <span className="text-[10px] text-gray-500 font-semibold">Drag cards between columns</span>
+            </div>
+            <TaskBoard items={tasks} onStageChange={handleStageChange} />
+          </section>
+
+          <section className="lg:col-span-4 glass-card rounded-2xl p-6">
+            <MiniCalendar busyDays={[3, 9, 14, 17, 22, 28]} />
+          </section>
         </div>
 
         <section className="glass-card rounded-2xl p-6">
