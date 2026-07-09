@@ -1,7 +1,7 @@
-import { Outlet } from "react-router-dom";
 import { MarketingNavbar } from "@/components/marketing/MarketingNavbar";
 import { MarketingFooter } from "@/components/marketing/MarketingFooter";
 import { CosmicBackground } from "@/components/marketing/CosmicBackground";
+import { PageTransition } from "@/components/layout/PageTransition";
 
 export function MarketingLayout() {
   return (
@@ -9,7 +9,7 @@ export function MarketingLayout() {
       <CosmicBackground />
       <MarketingNavbar />
       <div className="relative z-10">
-        <Outlet />
+        <PageTransition />
       </div>
       <MarketingFooter />
     </div>

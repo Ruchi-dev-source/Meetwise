@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
 import { Menu, Sparkles } from "lucide-react";
 import { AppSidebar } from "@/components/layout/AppSidebar";
+import { PageTransition } from "@/components/layout/PageTransition";
 
 export function AppShell() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -49,7 +49,7 @@ export function AppShell() {
       )}
 
       <main className="relative z-10 md:pl-[250px] pt-14 md:pt-0">
-        <Outlet />
+        <PageTransition />
       </main>
     </div>
   );
