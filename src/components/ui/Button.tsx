@@ -16,9 +16,9 @@ interface BaseProps {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.03]",
-  secondary: "bg-white text-black hover:bg-transparent hover:text-white border border-white",
-  ghost: "bg-surface-card border border-white/10 text-white hover:bg-white/10",
+    "bg-gradient-to-r from-primary to-secondary text-white shadow-md shadow-primary/10 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5",
+  secondary: "bg-white text-black hover:bg-transparent hover:text-white border border-white hover:-translate-y-0.5",
+  ghost: "bg-surface-card border border-white/10 text-white hover:bg-white/10 hover:border-white/20",
   outline: "bg-transparent border border-white/15 text-white hover:border-primary/50 hover:bg-primary/5",
 };
 
@@ -29,7 +29,7 @@ const sizeClasses: Record<Size, string> = {
 };
 
 const shared =
-  "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-300 whitespace-nowrap disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-tight transition-all duration-300 ease-out whitespace-nowrap disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97] active:duration-150";
 
 type NativeButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children" | "className">;
 type NativeAnchorProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "className" | "href">;
