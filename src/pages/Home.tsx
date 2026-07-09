@@ -24,6 +24,7 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Reveal } from "@/components/ui/Reveal";
 import { FeatureCard } from "@/components/marketing/FeatureCard";
+import { MeetingOverloadIllustration } from "@/components/marketing/MeetingOverloadIllustration";
 import { TimelineConnector } from "@/components/marketing/TimelineConnector";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -91,9 +92,9 @@ const capabilities = [
   {
     icon: Shield,
     iconClass: "bg-emerald-500/10 text-emerald-400",
-    title: "Compliance & Trust",
+    title: "Privacy by Design",
     description:
-      "Your meeting archives are private, end-to-end encrypted, and hosted in fully compliant SOC2 and GDPR environments.",
+      "Every workspace is isolated, every recording is encrypted at rest and in transit, and retention windows are yours to configure.",
   },
 ];
 
@@ -189,16 +190,21 @@ export function Home() {
 
       {/* PROBLEM */}
       <section id="problem" className="max-w-7xl mx-auto px-6 mb-32">
-        <Reveal className="text-center max-w-3xl mx-auto mb-16">
-          <SectionLabel className="text-pinky">The Friction</SectionLabel>
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mt-2">
-            The Hidden Cost of Traditional Meetings
-          </h2>
-          <p className="text-gray-400 mt-4">
-            Unstructured conversations lead to organizational latency. Here is what modern enterprise teams
-            suffer from every day:
-          </p>
-        </Reveal>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+          <Reveal className="text-center lg:text-left">
+            <SectionLabel className="text-pinky">The Friction</SectionLabel>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mt-2">
+              The Hidden Cost of Traditional Meetings
+            </h2>
+            <p className="text-gray-400 mt-4">
+              Unstructured conversations lead to organizational latency. Here is what modern enterprise teams
+              suffer from every day:
+            </p>
+          </Reveal>
+          <Reveal delay={0.1} className="hidden lg:block">
+            <MeetingOverloadIllustration />
+          </Reveal>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {frictionCards.map((card, i) => (
@@ -371,21 +377,21 @@ export function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="flex flex-col gap-6">
                 <span className="text-xs uppercase tracking-widest text-emerald-400 font-semibold flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5" /> Enterprise Grade Protection
+                  <ShieldCheck className="w-3.5 h-3.5" /> Built for Enterprise Trust
                 </span>
                 <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
                   Your Data. Protected Everywhere.
                 </h2>
                 <p className="text-gray-400 font-light leading-relaxed">
-                  Security is not a secondary consideration. We ensure compliance with strict privacy
-                  standards. Audio streams, transcript data, calendar integrations, and platform events are
-                  protected by enterprise security patterns.
+                  Security isn't a secondary consideration — it's part of the architecture. Audio streams,
+                  transcript data, calendar integrations, and platform events are encrypted and isolated by
+                  design, with retention controls that stay in your hands.
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   {[
                     { Icon: Lock, label: "AES-256 Encryption" },
-                    { Icon: CheckCircle, label: "SOC2 Type II Certified" },
-                    { Icon: Globe, label: "GDPR & CCPA Compliant" },
+                    { Icon: CheckCircle, label: "Isolated Per-Workspace Data" },
+                    { Icon: Globe, label: "Configurable Retention Windows" },
                     { Icon: UserMinus, label: "Zero Data Retention Option" },
                   ].map(({ Icon, label }) => (
                     <div key={label} className="flex items-center gap-2 text-sm text-gray-300">
