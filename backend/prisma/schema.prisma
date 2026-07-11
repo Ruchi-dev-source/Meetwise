@@ -1,0 +1,210 @@
+// MeetWise database schema
+// Run `npm run prisma:migrate` inside backend/ after setting DATABASE_URL in .env
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  HOST
+  EMPLOYEE
+}
+
+enum MeetingStatus {
+  SCHEDULED
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum ParticipantRole {
+  HOST
+  COHOST
+  ATTENDEE
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum NotificationType {
+  TASK
+  MEETING
+  SUMMARY
+  SYSTEM
+}
+
+// ─────────────────────────────────────────────
+// Models
+// ─────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(EMPLOYEE)
+  jobTitle     String?
+  avatarColor  String? // tailwind class used by the frontend's initials avatar, e.g. "bg-primary"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  hostedMeetings   Meeting[]      @relation("MeetingHost")
+  participations   Participant[]
+  attendanceRecords Attendance[]
+  tasks            Task[]
+  notifications    Notification[]
+  activityLogs     ActivityLog[]
+  uploadedFiles    MeetingFile[]
+  refreshTokens    RefreshToken[]
+
+  @@map("users")
+}
+
+// Long-lived refresh tokens, one row per active session, so a single
+// session can be revoked (logout) without invalidating every device.
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Meeting {
+  id             String        @id @default(cuid())
+  title          String
+  description    String?
+  tag            String?
+  scheduledStart DateTime
+  scheduledEnd   DateTime
+  status         MeetingStatus @default(SCHEDULED)
+  summary        String? // AI-generated summary, populated after processing
+  hostId         String
+  host           User          @relation("MeetingHost", fields: [hostId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  participants Participant[]
+  attendance   Attendance[]
+  tasks        Task[]
+  files        MeetingFile[]
+
+  @@index([hostId])
+  @@index([scheduledStart])
+  @@map("meetings")
+}
+
+// Who is invited to / part of a meeting (distinct from Attendance,
+// which records whether they actually showed up).
+model Participant {
+  id        String          @id @default(cuid())
+  meetingId String
+  meeting   Meeting         @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      ParticipantRole @default(ATTENDEE)
+  joinedAt  DateTime?
+  leftAt    DateTime?
+
+  @@unique([meetingId, userId])
+  @@map("participants")
+}
+
+model Attendance {
+  id        String           @id @default(cuid())
+  meetingId String
+  meeting   Meeting          @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    AttendanceStatus @default(PRESENT)
+  markedAt  DateTime         @default(now())
+
+  @@unique([meetingId, userId])
+  @@map("attendance")
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  dueDate     DateTime?
+  meetingId   String?
+  meeting     Meeting?   @relation(fields: [meetingId], references: [id], onDelete: SetNull)
+  assigneeId  String
+  assignee    User       @relation(fields: [assigneeId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([assigneeId])
+  @@index([meetingId])
+  @@map("tasks")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  detail    String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+// Lightweight audit trail — who did what, when. userId is nullable so a
+// log entry can outlive the user record it references (onDelete: SetNull).
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("activity_logs")
+}
+
+model MeetingFile {
+  id           String   @id @default(cuid())
+  meetingId    String
+  meeting      Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  uploadedById String
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+  fileName     String
+  fileUrl      String
+  fileType     String
+  fileSizeKb   Int
+  createdAt    DateTime @default(now())
+
+  @@index([meetingId])
+  @@map("meeting_files")
+}
