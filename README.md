@@ -1,72 +1,53 @@
 # MeetWise AI
 
-A production-grade rebuild of MeetWise AI — an AI meeting intelligence platform — as a React 19 + TypeScript single-page application.
+An AI meeting intelligence platform — meeting summaries, attendance tracking, task assignment, and analytics for teams. Monorepo with a React frontend and an Express/Prisma/PostgreSQL backend.
 
-This replaces the original static, multi-file HTML mockup with a proper component-driven SPA: shared design system, client-side routing, real interactive state (task toggling, transcript search, editable profile/settings forms), and route-level code splitting.
+```
+MeetWise/
+├── frontend/    # React 19 + TypeScript + Vite SPA — see frontend/README.md
+├── backend/     # Express + TypeScript + Prisma + PostgreSQL API — see backend/README.md
+├── docs/
+│   └── API_MAPPING.md   # Every frontend screen mapped to the API it needs
+├── docker-compose.yml    # Postgres + backend for local development
+└── README.md    # you are here
+```
+
+## Quick Start
+
+### Backend
+
+```bash
+cd backend
+cp .env.example .env      # then fill in real secrets, see backend/README.md
+docker compose up -d postgres   # from repo root, or point DATABASE_URL at your own Postgres
+npm install
+npx prisma generate
+npx prisma migrate dev --name init
+npm run dev                # http://localhost:4000
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev                # http://localhost:5173
+```
+
+Full setup details, scripts, and troubleshooting live in each package's own README.
+
+## Project Status
+
+This project is being built in phases — see [`docs/API_MAPPING.md`](docs/API_MAPPING.md) for the complete frontend-to-API mapping and the planned build order.
+
+**Phase 1 (current):** Backend project skeleton — Express, TypeScript, Prisma, and PostgreSQL configured and verified end-to-end via a real health-check endpoint. The frontend is untouched functionally; it was only relocated into `frontend/` as part of this restructuring, and still runs entirely on mock data pending later phases.
+
+**Not yet built:** authentication, meetings, tasks, attendance, notifications, and file upload endpoints. The frontend still uses mock data in `frontend/src/data/mock.ts` until those land.
 
 ## Tech Stack
 
-| Layer | Technology |
+| | |
 |---|---|
-| Framework | React 19 + TypeScript |
-| Build tool | Vite 8 |
-| Styling | Tailwind CSS v4 |
-| Routing | React Router 7 |
-| Motion | Framer Motion (scroll reveals, respects `prefers-reduced-motion`) |
-| Icons | lucide-react |
-
-## Getting Started
-
-```bash
-npm install
-npm run dev
-```
-
-Open the printed local URL (typically `http://localhost:5173`).
-
-## Scripts
-
-| Command | Description |
-|---|---|
-| `npm run dev` | Start the Vite dev server with HMR |
-| `npm run build` | Type-check with `tsc -b`, then produce a production build in `dist/` |
-| `npm run preview` | Serve the production build locally |
-| `npm run lint` | Run oxlint |
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── ui/          # Design-system primitives (Button, GlassCard, Badge, Avatar, Toggle, Reveal, ...)
-│   ├── layout/       # Route shells: MarketingLayout, AuthLayout, AppShell + sidebar
-│   ├── marketing/    # Landing-page-only building blocks (navbar, footer, feature cards, backdrop)
-│   └── dashboard/    # Workspace-only widgets (StatCard, DonutChart, BarChart)
-├── pages/            # One component per route
-├── data/mock.ts      # Sample workspace data (meetings, tasks, transcript, analytics)
-├── lib/              # Shared types + utilities
-└── hooks/            # Shared hooks (scroll-to-top on navigation)
-```
-
-## Routes
-
-| Path | Page |
-|---|---|
-| `/` | Landing page |
-| `/login` | Sign in |
-| `/dashboard` | Workspace home |
-| `/analytics` | Analytics suite |
-| `/meeting` | Meeting transcript, AI summary, action items |
-| `/profile` | Personal profile & calendar integrations |
-| `/settings` | Workspace, AI, notification, security, billing settings |
-
-## Deployment
-
-This is a static-output Vite SPA. `vercel.json` rewrites all paths to `index.html` so client-side routes resolve correctly on direct load/refresh. Push to a Git repo and import it in Vercel, or run:
-
-```bash
-npm i -g vercel
-vercel --prod
-```
-
-No environment variables or backend are required — this build ships with realistic mock data in `src/data/mock.ts`; swap that module for real API calls when wiring up a backend.
+| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS v4, React Router, Framer Motion |
+| **Backend** | Node.js, Express, TypeScript, Prisma ORM, PostgreSQL, JWT, bcryptjs, Zod |
+| **Infra** | Docker Compose (Postgres + backend), Vercel (frontend hosting) |
