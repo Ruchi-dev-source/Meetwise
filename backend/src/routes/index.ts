@@ -1,14 +1,14 @@
 import { Router } from "express";
-import { healthRouter } from "./health.routes";
+import { healthRouter } from "../modules/health/health.routes";
+import { authRouter } from "../modules/auth/auth.routes";
 
 export const apiRouter = Router();
 
 apiRouter.use("/health", healthRouter);
+apiRouter.use("/auth", authRouter);
 
-// Phase 2+: apiRouter.use("/auth", authRouter);
-// Phase 2+: apiRouter.use("/users", userRouter);
-// Phase 2+: apiRouter.use("/meetings", meetingRouter);
-// Phase 2+: apiRouter.use("/tasks", taskRouter);
-// Phase 2+: apiRouter.use("/attendance", attendanceRouter);
-// Phase 2+: apiRouter.use("/notifications", notificationRouter);
-// Phase 2+: apiRouter.use("/files", fileRouter);
+// Phase 3+: apiRouter.use("/meetings", meetingRouter);
+// Phase 3+: apiRouter.use("/tasks", taskRouter);
+// Phase 3+: apiRouter.use("/attendance", attendanceRouter);
+// Phase 3+: apiRouter.use("/notifications", notificationRouter);
+// Phase 3+: apiRouter.use("/files", fileRouter);

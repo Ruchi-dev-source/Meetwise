@@ -1,4 +1,4 @@
-import { prisma } from "../config/db";
+import { prisma } from "../../lib/prisma";
 
 export async function checkDatabaseConnection(): Promise<{ connected: boolean; latencyMs: number }> {
   const start = Date.now();
