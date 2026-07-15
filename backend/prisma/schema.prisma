@@ -56,33 +56,54 @@ enum NotificationType {
 // Models
 // ─────────────────────────────────────────────
 
+// The multi-tenant root. Every user belongs to exactly one organization,
+// and every future feature (meetings, tasks, analytics, ...) will scope
+// its data through a user's organizationId.
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[]
+
+  @@map("organizations")
+}
+
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  name         String
-  role         Role     @default(EMPLOYEE)
-  jobTitle     String?
-  avatarColor  String? // tailwind class used by the frontend's initials avatar, e.g. "bg-primary"
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String       @id @default(uuid())
+  firstName      String
+  lastName       String
+  email          String       @unique
+  password       String
+  role           Role         @default(EMPLOYEE)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  jobTitle       String?
+  avatarColor    String? // tailwind class used by the frontend's initials avatar, e.g. "bg-primary"
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-  hostedMeetings   Meeting[]      @relation("MeetingHost")
-  participations   Participant[]
+  hostedMeetings    Meeting[]      @relation("MeetingHost")
+  participations    Participant[]
   attendanceRecords Attendance[]
-  tasks            Task[]
-  notifications    Notification[]
-  activityLogs     ActivityLog[]
-  uploadedFiles    MeetingFile[]
-  refreshTokens    RefreshToken[]
+  tasks             Task[]
+  notifications     Notification[]
+  activityLogs      ActivityLog[]
+  uploadedFiles     MeetingFile[]
+  refreshTokens     RefreshToken[]
 
+  @@index([organizationId])
   @@map("users")
 }
 
 // Long-lived refresh tokens, one row per active session, so a single
 // session can be revoked (logout) without invalidating every device.
+// `token` stores a SHA-256 hash of the actual token, never the raw value —
+// see backend/src/lib/refreshToken.ts.
 model RefreshToken {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   token     String   @unique
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -95,7 +116,7 @@ model RefreshToken {
 }
 
 model Meeting {
-  id             String        @id @default(cuid())
+  id             String        @id @default(uuid())
   title          String
   description    String?
   tag            String?
@@ -121,7 +142,7 @@ model Meeting {
 // Who is invited to / part of a meeting (distinct from Attendance,
 // which records whether they actually showed up).
 model Participant {
-  id        String          @id @default(cuid())
+  id        String          @id @default(uuid())
   meetingId String
   meeting   Meeting         @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   userId    String
@@ -135,7 +156,7 @@ model Participant {
 }
 
 model Attendance {
-  id        String           @id @default(cuid())
+  id        String           @id @default(uuid())
   meetingId String
   meeting   Meeting          @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   userId    String
@@ -148,7 +169,7 @@ model Attendance {
 }
 
 model Task {
-  id          String     @id @default(cuid())
+  id          String     @id @default(uuid())
   title       String
   description String?
   status      TaskStatus @default(TODO)
@@ -166,7 +187,7 @@ model Task {
 }
 
 model Notification {
-  id        String           @id @default(cuid())
+  id        String           @id @default(uuid())
   userId    String
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   type      NotificationType
@@ -182,7 +203,7 @@ model Notification {
 // Lightweight audit trail — who did what, when. userId is nullable so a
 // log entry can outlive the user record it references (onDelete: SetNull).
 model ActivityLog {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   action    String
@@ -194,7 +215,7 @@ model ActivityLog {
 }
 
 model MeetingFile {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   meetingId    String
   meeting      Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   uploadedById String

@@ -3,6 +3,7 @@
 // a stable local path (./models) so controllers/services don't import
 // @prisma/client directly all over the codebase.
 export type {
+  Organization,
   User,
   Meeting,
   Participant,
