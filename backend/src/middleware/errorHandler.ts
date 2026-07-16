@@ -25,7 +25,7 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
     statusCode = 400;
     message = "Validation failed";
     errors = err.flatten().fieldErrors;
-  } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  } else if (Prisma.PrismaClientKnownRequestError && err instanceof Prisma.PrismaClientKnownRequestError) {
     // P2002 = unique constraint violation, P2025 = record not found, etc.
     statusCode = err.code === "P2025" ? 404 : 409;
     message = mapPrismaError(err);
