@@ -5,7 +5,7 @@ import { ApiError } from "../../utils/ApiError";
 import { setRefreshTokenCookie, clearRefreshTokenCookie, REFRESH_TOKEN_COOKIE } from "../../lib/cookies";
 import * as authService from "./auth.service";
 import * as usersService from "../users/users.service";
-import { registerSchema, loginSchema } from "./auth.validators";
+import { registerSchema, loginSchema } from "./auth.validator";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const input = registerSchema.parse(req.body);
