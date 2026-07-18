@@ -1,0 +1,22 @@
+/*
+  Warnings:
+
+  - The values [DONE] on the enum `TaskStatus` will be removed. If these variants are still used in the database, this will fail.
+
+*/
+-- CreateEnum
+CREATE TYPE "TaskPriority" AS ENUM ('LOW', 'MEDIUM', 'HIGH');
+
+-- AlterEnum
+BEGIN;
+CREATE TYPE "TaskStatus_new" AS ENUM ('TODO', 'IN_PROGRESS', 'COMPLETED');
+ALTER TABLE "public"."tasks" ALTER COLUMN "status" DROP DEFAULT;
+ALTER TABLE "tasks" ALTER COLUMN "status" TYPE "TaskStatus_new" USING ("status"::text::"TaskStatus_new");
+ALTER TYPE "TaskStatus" RENAME TO "TaskStatus_old";
+ALTER TYPE "TaskStatus_new" RENAME TO "TaskStatus";
+DROP TYPE "public"."TaskStatus_old";
+ALTER TABLE "tasks" ALTER COLUMN "status" SET DEFAULT 'TODO';
+COMMIT;
+
+-- AlterTable
+ALTER TABLE "tasks" ADD COLUMN     "priority" "TaskPriority" NOT NULL DEFAULT 'MEDIUM';
