@@ -52,9 +52,11 @@ enum TaskPriority {
 }
 
 enum NotificationType {
-  TASK
-  MEETING
-  SUMMARY
+  MEETING_INVITE
+  TASK_ASSIGNED
+  TASK_UPDATED
+  MEETING_REMINDER
+  ATTENDANCE_REMINDER
   SYSTEM
 }
 
@@ -96,6 +98,7 @@ model User {
   attendanceRecords Attendance[]
   tasks             Task[]
   notifications     Notification[]
+  sentNotifications Notification[] @relation("NotificationSender")
   activityLogs      ActivityLog[]
   uploadedFiles     MeetingFile[]
   refreshTokens     RefreshToken[]
@@ -139,6 +142,7 @@ model Meeting {
   attendance   Attendance[]
   tasks        Task[]
   files        MeetingFile[]
+  notifications Notification[]
 
   @@index([hostId])
   @@index([scheduledStart])
@@ -188,6 +192,8 @@ model Task {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
+  notifications Notification[]
+
   @@index([assigneeId])
   @@index([meetingId])
   @@map("tasks")
@@ -199,9 +205,16 @@ model Notification {
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   type      NotificationType
   title     String
-  detail    String
+  message   String
   read      Boolean          @default(false)
   createdAt DateTime         @default(now())
+
+  meetingId String?
+  meeting   Meeting? @relation(fields: [meetingId], references: [id], onDelete: SetNull)
+  taskId    String?
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  senderId  String?
+  sender    User?    @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
 
   @@index([userId, read])
   @@map("notifications")

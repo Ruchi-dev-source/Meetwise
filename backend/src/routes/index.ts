@@ -5,6 +5,7 @@ import { meetingRouter } from "../modules/meetings";
 import { participantRouter } from "../modules/participants";
 import { attendanceRouter } from "../modules/attendance";
 import { meetingTaskRouter, taskRouter } from "../modules/tasks";
+import { notificationRouter } from "../modules/notifications";
 
 export const apiRouter = Router();
 
@@ -15,6 +16,6 @@ apiRouter.use("/meetings/:meetingId/attendance", attendanceRouter);
 apiRouter.use("/meetings/:meetingId/tasks", meetingTaskRouter);
 apiRouter.use("/meetings", meetingRouter);
 apiRouter.use("/tasks", taskRouter);
+apiRouter.use("/notifications", notificationRouter);
 
-// Phase 7+: apiRouter.use("/notifications", notificationRouter);
-// Phase 7+: apiRouter.use("/files", fileRouter);
+// Phase 8+: apiRouter.use("/files", fileRouter);
