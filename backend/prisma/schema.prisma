@@ -60,6 +60,14 @@ enum NotificationType {
   SYSTEM
 }
 
+enum StorageProvider {
+  LOCAL
+  // S3, AZURE, GCS land here later — the app only ever reads/writes this
+  // enum plus `storageKey` (an opaque provider-specific locator), so
+  // adding a provider is a schema + one storage-adapter change, not a
+  // MeetingFile shape change.
+}
+
 // ─────────────────────────────────────────────
 // Models
 // ─────────────────────────────────────────────
@@ -235,16 +243,18 @@ model ActivityLog {
 }
 
 model MeetingFile {
-  id           String   @id @default(uuid())
-  meetingId    String
-  meeting      Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
-  uploadedById String
-  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
-  fileName     String
-  fileUrl      String
-  fileType     String
-  fileSizeKb   Int
-  createdAt    DateTime @default(now())
+  id               String          @id @default(uuid())
+  meetingId        String
+  meeting          Meeting         @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  uploaderId       String
+  uploader         User            @relation(fields: [uploaderId], references: [id])
+  originalFileName String
+  storedFileName   String
+  mimeType         String
+  size             Int
+  storageProvider  StorageProvider @default(LOCAL)
+  storageKey       String
+  uploadedAt       DateTime        @default(now())
 
   @@index([meetingId])
   @@map("meeting_files")
