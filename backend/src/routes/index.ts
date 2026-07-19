@@ -7,6 +7,7 @@ import { attendanceRouter } from "../modules/attendance";
 import { meetingTaskRouter, taskRouter } from "../modules/tasks";
 import { notificationRouter } from "../modules/notifications";
 import { meetingFileRouter, fileRouter } from "../modules/files";
+import { analyticsRouter } from "../modules/analytics";
 
 export const apiRouter = Router();
 
@@ -20,3 +21,4 @@ apiRouter.use("/meetings", meetingRouter);
 apiRouter.use("/tasks", taskRouter);
 apiRouter.use("/notifications", notificationRouter);
 apiRouter.use("/files", fileRouter);
+apiRouter.use("/analytics", analyticsRouter);
