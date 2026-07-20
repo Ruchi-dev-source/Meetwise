@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma";
+import type { NotificationType } from "@prisma/client";
 
 // userId alone is sufficient scoping for all of these — a user belongs to
 // exactly one organization, so "this user's notifications" and "this
@@ -43,4 +44,25 @@ export function markAllAsRead(userId: string) {
 
 export function deleteById(notificationId: string) {
   return prisma.notification.delete({ where: { id: notificationId } });
+}
+
+export interface NotificationInput {
+  userId: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  meetingId?: string;
+  taskId?: string;
+  senderId?: string;
+}
+
+/**
+ * Batched insert — any caller notifying multiple recipients at once (e.g.
+ * the calendar module notifying a meeting's host + every participant)
+ * should call this once with the full list rather than looping create()
+ * calls, so it's one INSERT instead of N.
+ */
+export function createMany(notifications: NotificationInput[]) {
+  if (notifications.length === 0) return Promise.resolve({ count: 0 });
+  return prisma.notification.createMany({ data: notifications });
 }
