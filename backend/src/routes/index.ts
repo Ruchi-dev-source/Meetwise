@@ -10,6 +10,7 @@ import { meetingFileRouter, fileRouter } from "../modules/files";
 import { analyticsRouter } from "../modules/analytics";
 import { calendarRouter } from "../modules/calendar";
 import { aiRouter } from "../modules/ai";
+import { assistantRouter } from "../modules/assistant";
 
 export const apiRouter = Router();
 
@@ -26,3 +27,4 @@ apiRouter.use("/files", fileRouter);
 apiRouter.use("/analytics", analyticsRouter);
 apiRouter.use("/calendar", calendarRouter);
 apiRouter.use("/ai", aiRouter);
+apiRouter.use("/assistant", assistantRouter);
