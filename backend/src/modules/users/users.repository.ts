@@ -27,3 +27,15 @@ export async function isEmailTaken(email: string): Promise<boolean> {
   const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } });
   return existing !== null;
 }
+
+/**
+ * Minimal member directory for name/email-based participant resolution
+ * (see modules/assistant/participant.resolver.ts). One query regardless
+ * of how many names need resolving, rather than a lookup per name.
+ */
+export function listOrganizationMembers(organizationId: string) {
+  return prisma.user.findMany({
+    where: { organizationId },
+    select: { id: true, firstName: true, lastName: true, email: true },
+  });
+}
