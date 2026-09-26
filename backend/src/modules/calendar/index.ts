@@ -17,4 +17,6 @@ export type {
   CalendarMeetingSummary,
   CalendarViewResponse,
   ReminderSweepResult,
+  SlotSearchOptions,
+  AvailableSlot,
 } from "./calendar.types";

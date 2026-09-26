@@ -88,6 +88,29 @@ export function getTodaysMeetings(organizationId: string, userId: string, start:
 }
 
 /**
+ * All (non-cancelled) meetings for the given users within a broad window —
+ * the raw data the smart-scheduling tool's slot search needs, fetched once
+ * regardless of how many candidate slots get evaluated against it
+ * afterwards (see calendar.service.findAvailableSlots). Distinct from
+ * findOverlappingMeetings, which checks one specific [start, end) range;
+ * this returns everything in a window so slot-finding can be done
+ * entirely in memory against a single fetched dataset.
+ */
+export function findMeetingsInRange(organizationId: string, userIds: string[], start: Date, end: Date) {
+  return prisma.meeting.findMany({
+    where: {
+      host: { organizationId },
+      status: { not: "CANCELLED" },
+      scheduledStart: { lt: end },
+      scheduledEnd: { gt: start },
+      OR: [{ hostId: { in: userIds } }, { participants: { some: { userId: { in: userIds } } } }],
+    },
+    select: { id: true, scheduledStart: true, scheduledEnd: true },
+    orderBy: { scheduledStart: "asc" },
+  });
+}
+
+/**
  * System-wide sweep for the reminder service (Feature 8) — deliberately
  * NOT organization-scoped, since this isn't a per-request user action; a
  * future cron job calls it once for the whole system, the same way any

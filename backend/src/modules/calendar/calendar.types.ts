@@ -68,3 +68,27 @@ export interface ReminderSweepResult {
   meetingsProcessed: number;
   remindersCreated: number;
 }
+
+/**
+ * Policy knobs for findAvailableSlots — deliberately NOT hardcoded inside
+ * this service. CalendarService owns the generic "find gaps given these
+ * constraints" algorithm; callers (the smart-scheduling tool) own the
+ * actual policy values (working hours, lunch window, buffer, whether
+ * weekends are allowed), so this service stays reusable for any future
+ * caller with different policy needs instead of being tied to one
+ * feature's specific defaults.
+ */
+export interface SlotSearchOptions {
+  workingHoursStart: number;
+  workingHoursEnd: number;
+  lunchStart?: number;
+  lunchEnd?: number;
+  bufferMinutes: number;
+  allowWeekends: boolean;
+  maxResults: number;
+}
+
+export interface AvailableSlot {
+  start: Date;
+  end: Date;
+}

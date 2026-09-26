@@ -6,6 +6,7 @@ import { participantRepository } from "../participants";
 import { notificationRepository } from "../notifications";
 import type {
   AvailabilityResult,
+  AvailableSlot,
   CalendarDayGroup,
   CalendarMeetingSummary,
   CalendarView,
@@ -15,6 +16,7 @@ import type {
   ReminderSweepResult,
   ScheduleMeetingInput,
   ScheduleMeetingResult,
+  SlotSearchOptions,
 } from "./calendar.types";
 
 // ── Permissions (Feature 10: "Validate permissions" is a service concern —
@@ -258,6 +260,89 @@ export async function getTodaysMeetings(user: AuthenticatedUser): Promise<Calend
     addDays(startOfDay(now), 1)
   );
   return meetings.map(toSummary);
+}
+
+// ── Feature: Available Slot Search ────────────────────────────────────────
+// Deterministic gap-finding within a window, respecting working hours,
+// an optional lunch break, weekends, and a buffer around existing
+// meetings — the "scheduling logic stays inside CalendarService" piece
+// the smart-scheduling assistant tool calls into.
+
+function overlapsBusy(start: Date, end: Date, busy: { start: Date; end: Date }[]): boolean {
+  return busy.some((b) => start < b.end && end > b.start);
+}
+
+export async function findAvailableSlots(
+  user: AuthenticatedUser,
+  participantIds: string[],
+  durationMinutes: number,
+  searchStart: Date,
+  searchEnd: Date,
+  options: SlotSearchOptions
+): Promise<AvailableSlot[]> {
+  const checkedUserIds = [user.id, ...participantIds];
+  const meetings = await calendarRepository.findMeetingsInRange(user.organizationId, checkedUserIds, searchStart, searchEnd);
+
+  const bufferMs = options.bufferMinutes * 60_000;
+  const busy = meetings.map((m: { scheduledStart: Date; scheduledEnd: Date }) => ({
+    start: new Date(m.scheduledStart.getTime() - bufferMs),
+    end: new Date(m.scheduledEnd.getTime() + bufferMs),
+  }));
+
+  const slots: AvailableSlot[] = [];
+  const cursor = new Date(searchStart);
+  const durationMs = durationMinutes * 60_000;
+  const CANDIDATE_STEP_MS = 30 * 60_000;
+  let guard = 0;
+  const GUARD_LIMIT = 20_000;
+
+  while (cursor < searchEnd && slots.length < options.maxResults && guard < GUARD_LIMIT) {
+    guard += 1;
+    const dayOfWeek = cursor.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+    if (isWeekend && !options.allowWeekends) {
+      cursor.setDate(cursor.getDate() + 1);
+      cursor.setHours(Math.floor(options.workingHoursStart), (options.workingHoursStart % 1) * 60, 0, 0);
+      continue;
+    }
+
+    const hourOfDay = cursor.getHours() + cursor.getMinutes() / 60;
+
+    if (hourOfDay < options.workingHoursStart) {
+      cursor.setHours(Math.floor(options.workingHoursStart), (options.workingHoursStart % 1) * 60, 0, 0);
+      continue;
+    }
+
+    if (
+      options.lunchStart !== undefined &&
+      options.lunchEnd !== undefined &&
+      hourOfDay >= options.lunchStart &&
+      hourOfDay < options.lunchEnd
+    ) {
+      cursor.setHours(Math.floor(options.lunchEnd), (options.lunchEnd % 1) * 60, 0, 0);
+      continue;
+    }
+
+    const slotEnd = new Date(cursor.getTime() + durationMs);
+    const slotEndHour = slotEnd.getHours() + slotEnd.getMinutes() / 60;
+    const spillsToNextDay = slotEnd.getDate() !== cursor.getDate() || slotEnd < cursor;
+
+    if (spillsToNextDay || slotEndHour > options.workingHoursEnd) {
+      cursor.setDate(cursor.getDate() + 1);
+      cursor.setHours(Math.floor(options.workingHoursStart), (options.workingHoursStart % 1) * 60, 0, 0);
+      continue;
+    }
+
+    if (!overlapsBusy(cursor, slotEnd, busy)) {
+      slots.push({ start: new Date(cursor), end: slotEnd });
+      cursor.setTime(cursor.getTime() + CANDIDATE_STEP_MS);
+    } else {
+      cursor.setTime(cursor.getTime() + 15 * 60_000);
+    }
+  }
+
+  return slots;
 }
 
 // ── Feature 8: Reminder Service ───────────────────────────────────────────
