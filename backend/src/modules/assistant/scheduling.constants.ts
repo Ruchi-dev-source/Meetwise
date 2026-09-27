@@ -1,0 +1,10 @@
+export const WORKING_HOURS_START = 9;
+export const WORKING_HOURS_END = 18;
+export const LUNCH_BREAK_START = 12.5;
+export const LUNCH_BREAK_END = 13.5;
+export const DEFAULT_BUFFER_MINUTES = 15;
+export const ALLOW_WEEKENDS_BY_DEFAULT = false;
+export const DEFAULT_TIMEZONE = "UTC";
+export const SLOT_SEARCH_WINDOW_DAYS = 14;
+export const MAX_RECOMMENDATIONS = 3;
+export const PENDING_DRAFT_TTL_MS = 15 * 60 * 1000;
