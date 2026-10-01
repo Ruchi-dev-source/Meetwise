@@ -12,8 +12,8 @@ function requireUser(req: Request) {
 
 export const chat = asyncHandler(async (req: Request, res: Response) => {
   const user = requireUser(req);
-  const { message } = assistantChatSchema.parse(req.body);
+  const input = assistantChatSchema.parse(req.body);
 
-  const result = await assistantService.chat({ message }, user);
+  const result = await assistantService.chat(input, user);
   return sendSuccess(res, 200, "Assistant response generated", result);
 });
