@@ -1,3 +1,4 @@
+import { schedulingTool } from "./scheduling.tool";
 import type { AssistantIntent, AssistantTool, ToolExecutionResult } from "./assistant.types";
 
 function notImplemented(toolName: string): ToolExecutionResult {
@@ -8,38 +9,28 @@ function notImplemented(toolName: string): ToolExecutionResult {
 }
 
 // ── Feature 9: placeholder tools ─────────────────────────────────────────
-// All six named tools return NOT_IMPLEMENTED in this phase, per Feature
-// 9's explicit instruction, even where an existing service (Calendar/
-// Task/Analytics) could technically be called today. Two reasons this is
-// the correct scope for THIS module, not a shortcut:
+// Five of the six named tools return NOT_IMPLEMENTED in this phase, per
+// Feature 9's explicit instruction. SCHEDULE_MEETING is the one
+// exception: the AI Smart Scheduling task replaced its placeholder with
+// a real implementation (scheduling.tool.ts) — see that task's Feature
+// 12: "Replace the current NOT_IMPLEMENTED scheduling tool. Do not
+// modify other tool implementations." calendarTool below keeps its
+// other three intents (reschedule/cancel/ask-meetings) as placeholders,
+// exactly as before.
 //
-// 1. Feature 9 says so explicitly and lists all six tools by name — it's
-//    not ambiguous, and it directly parallels the AI Foundation module's
-//    own "infrastructure first, feature behavior later" scope from the
-//    previous task.
-// 2. Doing it "for real" would mean inventing unspecified behavior this
-//    task never asked for: turning "next week" into an actual datetime,
-//    matching "the sprint planning meeting" in free text to a specific
-//    meeting id for reschedule/cancel, deciding what "my tasks across
-//    every meeting" even queries (no such cross-meeting listing exists
-//    in the tasks module today - it only lists tasks for one meetingId
-//    at a time). Guessing at that design here risks conflicting with
-//    whatever the follow-up task that actually specifies it decides.
-//
-// Each execute() signature below is exactly what a real implementation
-// will use: it already receives the authenticated user (everything every
-// listed service needs for its own auth/org-scoping) and the running
-// conversation context. Upgrading a tool from placeholder to real later
-// means changing the body of one function here — nothing in
-// tool.executor.ts, assistant.service.ts, or assistant.controller.ts
-// needs to change.
+// Each remaining placeholder's execute() signature is exactly what a
+// real implementation will use: it already receives the authenticated
+// user and the running conversation context. Upgrading one from
+// placeholder to real later means changing the body of one function
+// here — nothing in tool.executor.ts, assistant.service.ts, or
+// assistant.controller.ts needs to change.
 
 export const calendarTool: AssistantTool = {
   name: "Calendar Tool",
-  // Would call calendarService.scheduleMeeting / checkAvailability /
-  // getUpcomingMeetings / getTodaysMeetings, and meetingService.updateMeeting
-  // / deleteMeeting for reschedule/cancel, once wired up.
-  intents: ["SCHEDULE_MEETING", "RESCHEDULE_MEETING", "CANCEL_MEETING", "ASK_MEETINGS"],
+  // RESCHEDULE_MEETING/CANCEL_MEETING would call meetingService.updateMeeting
+  // / deleteMeeting; ASK_MEETINGS would call calendarService.getUpcomingMeetings
+  // / getTodaysMeetings, once wired up.
+  intents: ["RESCHEDULE_MEETING", "CANCEL_MEETING", "ASK_MEETINGS"],
   async execute() {
     return notImplemented("Calendar Tool");
   },
@@ -92,7 +83,15 @@ export const chatTool: AssistantTool = {
   },
 };
 
-const ALL_TOOLS: readonly AssistantTool[] = [calendarTool, summaryTool, analyticsTool, taskTool, dashboardTool, chatTool];
+const ALL_TOOLS: readonly AssistantTool[] = [
+  schedulingTool,
+  calendarTool,
+  summaryTool,
+  analyticsTool,
+  taskTool,
+  dashboardTool,
+  chatTool,
+];
 
 const intentToTool = new Map<AssistantIntent, AssistantTool>();
 for (const tool of ALL_TOOLS) {
